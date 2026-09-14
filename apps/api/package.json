@@ -1,0 +1,37 @@
+{
+  "name": "@takeandstake/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "tsx src/index.ts",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test src/auth-handle.test.ts src/wallet-bind.test.ts src/webhook-auth.test.ts src/take-access.test.ts src/services/mera-session.test.ts"
+  },
+  "dependencies": {
+    "@privy-io/server-auth": "^1.32.5",
+    "@takeandstake/ai": "workspace:*",
+    "@takeandstake/chain": "workspace:*",
+    "@takeandstake/config": "workspace:*",
+    "@takeandstake/core": "workspace:*",
+    "@takeandstake/db": "workspace:*",
+    "@takeandstake/shared": "workspace:*",
+    "@takeandstake/markets": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.4.2",
+    "bullmq": "^5.34.5",
+    "pino": "^9.6.0",
+    "pino-http": "^10.4.0",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2"
+  }
+}
