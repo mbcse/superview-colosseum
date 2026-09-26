@@ -1,0 +1,142 @@
+export function fmtPct(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  if (Math.abs(n) < 5e-7) return "0.00%";
+  const sign = n > 0 ? "+" : n < 0 ? "−" : "";
+  return `${sign}${Math.abs(n * 100).toFixed(2)}%`;
+}
+
+export function fmtVs(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  const sign = n > 0 ? "+" : n < 0 ? "−" : "";
+  return `${sign}${Math.abs(n).toFixed(2)}%`;
+}
+
+export function fmtNum(n: number | null | undefined, digits = 2) {
+  if (n == null || Number.isNaN(n)) return "—";
+  return n.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: 0 });
+}
+
+export function fmtPx(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  if (n > 0 && n < 0.01) {
+    const s = n.toFixed(12).replace(/0+$/, "");
+    const frac = s.split(".")[1] ?? "";
+    const zeros = frac.match(/^0+/)?.[0].length ?? 0;
+    const rest = frac.slice(zeros, zeros + 3) || "1";
+    if (zeros >= 2) return `$0.0${subscript(zeros)}${rest}`;
+  }
+  return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function subscript(n: number) {
+  return String(n).replace(/[0-9]/g, (d) => "₀₁₂₃₄₅₆₇₈₉"[Number(d)] ?? d);
+}
+
+export function fmtQty(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  return n.toLocaleString(undefined, { maximumFractionDigits: Math.abs(n) >= 100 ? 2 : 4 });
+}
+
+export function fmtUsd(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  const sign = n < 0 ? "−" : "";
+  return `${sign}$${Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+export function fmtUsdDelta(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return "—";
+  if (Math.abs(n) < 5e-3) return "$0.00";
+  const sign = n > 0 ? "+" : "−";
+  return `${sign}$${Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+export function fmtPooled(n: number | null | undefined) {
+  if (n == null || Number.isNaN(n)) return null;
+  if (Math.abs(n) >= 10_000) {
+    const k = n / 1000;
+    const digits = Number.isInteger(k) ? 0 : 1;
+    return `$${k.toLocaleString(undefined, { maximumFractionDigits: digits })}K`;
+  }
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: n % 1 ? 0 : 0 })}`;
+}
+
+export function changeTone(n: number | null | undefined): "up" | "down" | "flat" {
+  if (n == null || n === 0 || Number.isNaN(n)) return "flat";
+  return n > 0 ? "up" : "down";
+}
+
+export function skipReason(code?: string) {
+  switch (code) {
+    case "no_quote":
+      return "Couldn’t get a live quote";
+    case "no_feed":
+      return "Price isn’t available";
+    case "oracle_offside":
+      return "Quote didn’t match the market price";
+    case "dust":
+      return "Below minimum trade size";
+    case "no_privy_route":
+      return "No Privy route to that desk cash";
+    case "no_aurora_route":
+      return "No Aurora route to Monad AUSD";
+    case "desk_closed":
+      return "Desk closed / no live market";
+    case "gas_paused":
+      return "Gas sponsorship is paused";
+    case "pool_share":
+      return "Too large for this pool";
+    case "top_up_sol":
+      return "Top up SOL for fees";
+    case "no_route":
+      return "No route";
+    case "impact":
+      return "Price impact too high";
+    case "risk":
+      return "Failed a risk check";
+    default:
+      return code ? code.replace(/_/g, " ") : "Skipped";
+  }
+}
+
+export function orderStatusLabel(status?: string) {
+  switch (status) {
+    case "FILLED":
+      return "Filled";
+    case "PARTIAL":
+      return "Partially filled";
+    case "FAILED":
+      return "Nothing filled";
+    case "SUBMITTING":
+      return "Working…";
+    default:
+      return status ?? "—";
+  }
+}
+
+export function tick(sym: string, source?: string) {
+  const u = (sym || "").toUpperCase();
+  if (source && source !== "ROBINHOOD") return u;
+  if (source === "ROBINHOOD" && u.startsWith("RH") && u.length > 2) return u.slice(2);
+  if (!source && u.startsWith("RH") && u.length <= 6) return u.slice(2);
+  return u;
+}
+
+export function fmtAgo(iso?: string | Date | null) {
+  if (!iso) return "";
+  const d = typeof iso === "string" ? new Date(iso) : iso;
+  const t = d.getTime();
+  if (Number.isNaN(t)) return "";
+  const sec = Math.max(0, Math.round((Date.now() - t) / 1000));
+  if (sec < 45) return "now";
+  const min = Math.round(sec / 60);
+  if (min < 60) return `${min}m`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}h`;
+  const day = Math.round(hr / 24);
+  if (day < 7) return `${day}d`;
+  const week = Math.round(day / 7);
+  if (week < 5) return `${week}w`;
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+export const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:4000";
