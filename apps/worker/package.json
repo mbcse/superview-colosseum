@@ -1,0 +1,27 @@
+{
+  "name": "@takeandstake/worker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "build": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@takeandstake/ai": "workspace:*",
+    "@takeandstake/chain": "workspace:*",
+    "@takeandstake/config": "workspace:*",
+    "@takeandstake/core": "workspace:*",
+    "@takeandstake/db": "workspace:*",
+    "@takeandstake/shared": "workspace:*",
+    "@takeandstake/markets": "workspace:*",
+    "bullmq": "^5.34.5",
+    "ioredis": "^5.4.2",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
