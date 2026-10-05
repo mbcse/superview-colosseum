@@ -1,0 +1,23 @@
+{
+  "name": "@takeandstake/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@takeandstake/shared": "workspace:*",
+    "@takeandstake/db": "workspace:*",
+    "@takeandstake/chain": "workspace:*",
+    "@takeandstake/markets": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}
